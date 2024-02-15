@@ -17,4 +17,22 @@ main:
     li $a1, 1000
     syscall
 
+     #call process_whole_string
+     jal process_whole_string
+
+     #Exit program 
+     li $v0, 10
+     syscall
+
+
+process_whole_strinng:
+     move $t1, $a0
+
+    whole_string_loop: 
+        lb $t2, 0($t1)
+        beq $t2, $0, end_whole_string
+
+        
+     
+  
   
