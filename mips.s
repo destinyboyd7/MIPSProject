@@ -27,20 +27,20 @@ main:
 
 
 process_whole_string:
-    li $t8, 0     #index for substring 
+    li $s0, 0     #index for substring 
     whole_string_loop: 
         lb $t2, 0($a0)
         beq $t2, $0, end_whole_string
 
         bne $t2, 47, slash_found #checks if character is a forward slash
 
-        sb $t2, 0(t8)  #store the character into string beuffer
-        sub $sp, $sp, 4 
+        sb $t2, 0($s0)  #store the character into string beuffer
+        sub $sp, $sp, 4 #make space is stack
         sw $a0, 0($sp)
 
         jal process_substring
         
-        lw $a0, 0($sp) 
+        lw $a0, 0($sp) #resotore substring
         add $sp, $sp, -4
 
         j print_sum
@@ -52,22 +52,31 @@ process_whole_string:
     print_sum: 
         # Print the sum
         li $v0, 1
-        move $a0, $t8
+        move $a0, $v0
         syscall
    
         li $v0, 4
-        la $a0, newline
+        la $a0, space_slash
         syscall
-
-        # Exit program
-        li $v0, 10
-        syscall
-
-        
-        addi $t2, $t2, 1
-        addi $t8, $t8, 1
 
         j whole_string_loop
+
+end_whole_string:
+  jr $ra
+
+
+process_substring: 
+    move $t6, $t2
+    li $t8, 0 #sum 
+    
+    substring_loop:
+      lb $t7, 0($t6) # load 
+      beqz $t7, print_result   # If null terminator is encountered, print the result
+    
+
+      blt $t7, $t1, not_valid  # If the character is not a digit, go to not_valid
+      bgt $t7, $t0, not_digit
+    
 
         
      
