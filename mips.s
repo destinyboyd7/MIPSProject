@@ -85,6 +85,18 @@ process_substring:
         addi $t6, $t6, 1
         j substring_loop
 
+      not_digit: 
+        blt $t7, 65, not_valid
+        bgt $t7, 90, is_lower
+    
+        sub $t7, $t7, 65
+        add $t7, $t7, 10
+        add $t8, $t8, $t7
+
+        # Move to the next character in the input string
+        addi $t6, $t6, 1
+        j substring_loop
+
       
 
       
