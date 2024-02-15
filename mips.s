@@ -73,13 +73,19 @@ process_substring:
       lb $t7, 0($t6) # load 
       beq $t7, $0, process_result   # If null terminator is encountered, print the result
       
+      blt $t7, 48, not_valid
+      bgt $$t7, 122, not_valid
+
+      bgt $t7, 48, check_digits
+      
+      j process_result
       
       check_digit: 
-        blt $t7, $t1, not_valid  # If the character is not a digit, go to not_valid
-        bgt $t7, $t0, not_digit
+        blt $t7, 48, not_valid  # If the character is not a digit, go to not_valid
+        bgt $t7, 57, not_digit
 
         # Convert ASCII digit to integer and update sum
-        sub $t7, $t7, $t1
+        sub $t7, $t7, 48
         add $t8, $t8, $t7
 
         # Move to the next character in the input string
@@ -109,6 +115,16 @@ process_substring:
         # Move to the next character in the input string
         addi $t6, $t6, 1
         j substring_loop
+
+    not_valid:
+      # Print an error message for invalid input
+      li $v0, 4
+      la $a0, dash
+      syscall
+
+      li $v0, 4
+      la $a0, newline
+      syscall
 
       
 
