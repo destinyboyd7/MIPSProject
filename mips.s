@@ -43,7 +43,14 @@ process_whole_string:
         lw $a0, 0($sp) 
         add $sp, $sp, -4
 
-        #print result 
+        j print_sum
+
+        found_slash:
+          addi $a0, $a0, 1  #move to the next character in the input string 
+          j whole_string_loop
+          
+    print_sum: 
+        # Print the sum
         li $v0, 1
         move $a0, $t8
         syscall
@@ -52,17 +59,15 @@ process_whole_string:
         la $a0, newline
         syscall
 
+        # Exit program
+        li $v0, 10
+        syscall
+
         
         addi $t2, $t2, 1
         addi $t8, $t8, 1
 
-        found_slash:
-          addi $a0, $a0, 1  #move to the next character in the input string 
-          j whole_string_loop
-
-    end:
-        no_slash
-        j next_char
+        j whole_string_loop
 
         
      
