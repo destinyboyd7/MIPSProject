@@ -39,9 +39,19 @@ process_whole_string:
         sw $a0, 0($sp)
 
         jal process_substring
-
+        
         lw $a0, 0($sp) 
         add $sp, $sp, -4
+
+        #print result 
+        li $v0, 1
+        move $a0, $t8
+        syscall
+   
+        li $v0, 4
+        la $a0, newline
+        syscall
+
         
         addi $t2, $t2, 1
         addi $t8, $t8, 1
