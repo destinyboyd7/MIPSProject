@@ -28,38 +28,46 @@ main:
 
 process_whole_string:
     li $s0, 0     #index for substring 
+    move $t1, $a0
+    
     whole_string_loop: 
-        lb $t2, 0($a0)
+        lb $t7, 0($t1)
         beq $t2, $0, end_whole_string
 
         beq $t2, 47, slash_found #checks if character is a forward slash
 
-        sb $t2, 0($s0)  #store the character into string beuffer
-        sub $sp, $sp, 4 #make space is stack
-        sw $a0, 0($sp)
-
         jal process_substring
-        
-        lw $a0, 0($sp) #resotore substring
-        add $sp, $sp, -4
 
+        lw $a0, 0($sp)
+        addi $sp, $sp, -4 
+        
         j print_sum
 
-        slash_found:
-          addi $a0, $a0, 1  #move to the next character in the input string 
-          j whole_string_loop
+      slash_found:
+        addi $a0, $a0, 1  #move to the next character in the input string 
+        j whole_string_loop
           
     print_sum: 
         # Print the sum
+
+        beq $t8, 0, print_dash
+
         li $v0, 1
-        move $a0, $v0
+        move $a0, $t8
         syscall
-   
+        
         li $v0, 4
         la $a0, space_slash
         syscall
 
+        beq $t2, $0, end_whole_string
         j whole_string_loop
+    
+    print_dash: 
+          li $v0, 4
+          la $t8, dash
+          j print_sum
+
 
 end_whole_string:
   jr $ra
@@ -71,14 +79,13 @@ process_substring:
     
     substring_loop:
       lb $t7, 0($t6) # load 
-      beq $t7, $0, process_result   # If null terminator is encountered, print the result
+      beq $t7, $0, process_substring   # If null terminator is encountered, print the result
       
       blt $t7, 48, not_valid
-      bgt $$t7, 122, not_valid
+      bgt $t7, 122, not_valid
 
-      bgt $t7, 48, check_digits
-      
-      j process_result
+      bgt $t7, 48, check_digit
+
       
       check_digit: 
         blt $t7, 48, not_valid  # If the character is not a digit, go to not_valid
@@ -118,22 +125,11 @@ process_substring:
 
     not_valid:
       # Print an error message for invalid input
-      li $v0, 4
-      la $a0, dash
-      syscall
-
-      li $v0, 4
-      la $a0, newline
-      syscall
-
+      add $t8, $t7, 0 
       
+      jr $ra
 
-      
-      
+    move $v0, $t8
+    jr $ra
 
-    
 
-        
-     
-  
-  
