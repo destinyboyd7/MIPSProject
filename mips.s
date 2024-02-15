@@ -71,8 +71,9 @@ process_substring:
     
     substring_loop:
       lb $t7, 0($t6) # load 
-      beq $t7, $0, print_result   # If null terminator is encountered, print the result
-    
+      beq $t7, $0, process_result   # If null terminator is encountered, print the result
+      
+      
       check_digit: 
         blt $t7, $t1, not_valid  # If the character is not a digit, go to not_valid
         bgt $t7, $t0, not_digit
@@ -90,6 +91,18 @@ process_substring:
         bgt $t7, 90, is_lower
     
         sub $t7, $t7, 65
+        add $t7, $t7, 10
+        add $t8, $t8, $t7
+
+        # Move to the next character in the input string
+        addi $t6, $t6, 1
+        j substring_loop
+
+      is_lower:
+        blt $t7, 97, not_valid
+        bgt $t7, 122, not_valid
+    
+        sub $t7, $t7, 97
         add $t7, $t7, 10
         add $t8, $t8, $t7
 
